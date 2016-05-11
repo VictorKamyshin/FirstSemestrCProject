@@ -42,6 +42,7 @@ class listener_t {
         sf::SoundBufferRecorder recorder;
         sf::SoundBuffer buffer;
     public:
+        ~listener_t();
         void start_recording();
         void end_recording();
         void save_file(std::string file_name);
@@ -538,7 +539,7 @@ void redraw_btn :: react(base_window *window)
 	window->buttons[0]->set_title(L"Игра с подсказками", 20);
 	window->buttons[1]->set_title(L"Произвольная игра", 20);
 	window->buttons[2]->set_title(L"Назад",20);
-        window->status = 0;
+    window->status = 0;
 	window->listener.end_recording();
 	window->listener.save_file("my_record.ogg");
 
@@ -557,6 +558,7 @@ void game_btn :: react(base_window *window)
 	window->listener.start_recording();
 	window->status = 1;
 	window->win_clock.restart();
+    std::cout<<window->win_clock.getElapsedTime().asSeconds()<<std::endl;
 }
 
 void prompts_btn :: react(base_window *window)
@@ -624,6 +626,7 @@ void game_prompt_btn :: react(base_window *window)
 	window->listener.start_recording();
 	window->status = 2;
     window->win_clock.restart();
+    std::cout<<window->win_clock.getElapsedTime().asSeconds()<<std::endl;
 }
 
 void save_btn :: react(base_window *bwindow)
@@ -878,6 +881,9 @@ void listener_t::show_devices() {
     for ( int i = 0; i < availableDevices.size(); ++i ) {
         std::cout << availableDevices[ i ] << std::endl;
     }
+}
+listener_t::~listener_t() {
+    recorder.stop();
 }
 void writer_t::init_writer (int number_of_keys, std::vector<int> input_map ) { //массив с кодами кнопок из sfml
     sequence = new std::vector<float>[number_of_keys]; //это не наша нумерация кнопок для звуков
