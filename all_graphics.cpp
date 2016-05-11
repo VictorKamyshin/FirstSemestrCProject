@@ -558,7 +558,6 @@ void game_btn :: react(base_window *window)
 	window->listener.start_recording();
 	window->status = 1;
 	window->win_clock.restart();
-    std::cout<<window->win_clock.getElapsedTime().asSeconds()<<std::endl;
 }
 
 void prompts_btn :: react(base_window *window)
@@ -626,7 +625,6 @@ void game_prompt_btn :: react(base_window *window)
 	window->listener.start_recording();
 	window->status = 2;
     window->win_clock.restart();
-    std::cout<<window->win_clock.getElapsedTime().asSeconds()<<std::endl;
 }
 
 void save_btn :: react(base_window *bwindow)
