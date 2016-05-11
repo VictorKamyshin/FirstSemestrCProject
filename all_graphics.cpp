@@ -31,6 +31,7 @@ class sound_commander_t { //класс, начальник над звуками
         volume_control_t* volume_control;
         int num_of_sounds;
     public:
+      //  sound_commander_t(int number_of_sounds, std::vector<int> input_map, std::vector<std::string> paths);
         void init_sound_commander(int number_of_sounds, std::vector<int> input_map, std::vector<std::string> paths);
 	    int play (sf::Event event);
         int check (sf::Event event);
@@ -52,6 +53,7 @@ class writer_t {
         int sequence_size;
 	    std::vector<int> key_map;
     public:
+       // writer_t (int number_of_keys );
 	    void init_writer(int number_of_keys, std::vector<int> input_map);
         void remember ( sf::Time time, sf::Event event );
         void show ();
@@ -461,6 +463,33 @@ void base_window :: OnCreate()
 	buttons[0]->set_title(L"Игра",25);
 	buttons[1]->set_title(L"Настройки",25);
 	buttons[2]->set_title(L"Выход",25);
+
+	//-------------------------------------------
+	std::vector<std::string> paths;
+	    for( int i = 11; i < 62; ++i ) {
+        std::string temp_str = "Mics2_Layer7_00";
+        temp_str[ temp_str.size() - 2 ] += i / 10;
+        temp_str[ temp_str.size() - 1 ] += i % 10;
+        temp_str+=".wav";
+        paths.push_back(temp_str);
+    }
+    int test_mask[37] = {25, 23, 3, 2, 5, 21, 1, 7, 13, 9, 12, 10, 49,
+    50, 48, 52, 51, 16, 22, 29, 4, 30, 17, 31,
+    19, 24, 33, 20, 34, 8, 14, 26, 15, 56, 46, 55, 47 } ;
+    int reverse_mask[57];
+    for ( int i = 0; i < 57; ++i ) {
+        reverse_mask[i]=-1;
+    }
+    for(int i = 0; i < 37; ++i ){
+        reverse_mask[test_mask[i]] = i;
+    }
+    std::vector<int> key_map;
+    for( int i = 0; i < 57; ++i ) {
+        key_map.push_back(reverse_mask[i]);
+    }
+	support_team.init_support_team(test_mask, &win_font );
+    sound_commander.init_sound_commander(paths.size(), key_map, paths);
+    writer.init_writer(37, key_map);
 }
 
 void base_window :: draw_itself()
@@ -509,7 +538,6 @@ void redraw_btn :: react(base_window *window)
 	window->buttons[0]->set_title(L"Игра с подсказками", 20);
 	window->buttons[1]->set_title(L"Произвольная игра", 20);
 	window->buttons[2]->set_title(L"Назад",20);
-	if(window->status==2) {std::cout<<window->support_team.get_score()<<std::endl;}
     window->status = 0;
 	window->listener.end_recording();
 	window->listener.save_file("my_record.ogg");
@@ -526,33 +554,10 @@ void game_btn :: react(base_window *window)
 	window->buttons[0]->set_title(L"Назад",25);
 
      //свободный игровой режим
-	std::vector<std::string> paths;
-	    for( int i = 11; i < 62; ++i ) {
-        std::string temp_str = "Mics2_Layer7_00";
-        temp_str[ temp_str.size() - 2 ] += i / 10;
-        temp_str[ temp_str.size() - 1 ] += i % 10;
-        temp_str+=".wav";
-        paths.push_back(temp_str);
-    }
-    int test_mask[37] = {25, 23, 3, 2, 5, 21, 1, 7, 13, 9, 12, 10, 49,
-    50, 48, 52, 51, 16, 22, 29, 4, 30, 17, 31,
-    19, 24, 33, 20, 34, 8, 14, 26, 15, 56, 46, 55, 47 } ;
-    int reverse_mask[57];
-    for ( int i = 0; i < 57; ++i ) {
-        reverse_mask[i]=-1;
-    }
-    for(int i = 0; i < 37; ++i ){
-        reverse_mask[test_mask[i]] = i;
-    }
-    std::vector<int> key_map;
-    for( int i = 0; i < 57; ++i ) {
-        key_map.push_back(reverse_mask[i]);
-    }
-    window->sound_commander.init_sound_commander(paths.size(), key_map, paths);
-    window->writer.init_writer(37, key_map);
 	window->listener.start_recording();
 	window->status = 1;
-    window->win_clock.restart();
+	window->win_clock.restart();
+    std::cout<<window->win_clock.getElapsedTime().asSeconds()<<std::endl;
 }
 
 void prompts_btn :: react(base_window *window)
@@ -613,34 +618,14 @@ void game_prompt_btn :: react(base_window *window)
 
 
 
-	std::vector<std::string> paths;
-	    for( int i = 11; i < 62; ++i ) {
-        std::string temp_str = "Mics2_Layer7_00";
-        temp_str[ temp_str.size() - 2 ] += i / 10;
-        temp_str[ temp_str.size() - 1 ] += i % 10;
-        temp_str+=".wav";
-        paths.push_back(temp_str);
-    }
 	int test_mask[37] = {25, 23, 3, 2, 5, 21, 1, 7, 13, 9, 12, 10, 49,
     50, 48, 52, 51, 16, 22, 29, 4, 30, 17, 31,
     19, 24, 33, 20, 34, 8, 14, 26, 15, 56, 46, 55, 47 } ;
-    int reverse_mask[57];
-    for ( int i = 0; i < 57; ++i ) {
-        reverse_mask[i]=-1;
-    }
-    for(int i = 0; i < 37; ++i ){
-        reverse_mask[test_mask[i]] = i;
-    }
-    std::vector<int> key_map;
-    for( int i = 0; i < 57; ++i ) {
-        key_map.push_back(reverse_mask[i]);
-    }
 	window->support_team.init_support_team(test_mask, &(window->win_font) );
-    window->sound_commander.init_sound_commander(paths.size(), key_map, paths);
-    //window->writer.init_writer(37, key_map);
 	window->listener.start_recording();
 	window->status = 2;
     window->win_clock.restart();
+    std::cout<<window->win_clock.getElapsedTime().asSeconds()<<std::endl;
 }
 
 void save_btn :: react(base_window *bwindow)
@@ -666,7 +651,9 @@ void save_btn :: react(base_window *bwindow)
 
         }
 
+        window.clear();
 		window.draw_itself();
+        window.display();
     }
 }
 
@@ -937,13 +924,6 @@ support_part_t::support_part_t (char key_symb, int key_number, float time_start,
     body.setRadius(20);
     body.setFillColor(sf::Color(100, 250, 50));
     MyFont.loadFromFile("arial.ttf");
-    /*if(('A'+key_code)<='Z') {
-        letter.setString((char)('A'+(key_code)));
-    } else {
-        if(key_code>=48 && key_code <= 57) {
-            letter.setString((char)('0'+(key_code - 48)));
-        } else {letter.setString((char)('.'+(key_code - 48)));}
-    }*/
     letter.setString(key_symb);
     letter.setFont(*font);
     letter.setCharacterSize(24);
@@ -954,7 +934,7 @@ support_part_t::support_part_t (char key_symb, int key_number, float time_start,
     tail.setFillColor(sf::Color(100, 250, 50)); //это все движение вокруг подсказок
 }
 int support_part_t::draw (sf::Time time_c,  base_window& window ) {
-    if ( (time_pressed >= time_c.asSeconds() + 3.175 ) || (time_elapsed < time_c.asSeconds() ) ) { //еще слишком рано что-то рисовать
+    if ( (time_pressed >= time_c.asSeconds() + 3.175 ) || (time_elapsed < time_c.asSeconds()  ) ) { //еще слишком рано что-то рисовать
         return 0; //или уже слишком поздно
     }
     int status;
@@ -1007,7 +987,7 @@ void support_team_t::init_support_team(int* input_key_map, sf::Font* font) {
     int temp;
     float f_tmp_1, f_tmp_2;
     infile >> temp;
-    //std::cout<<temp<<std::endl;
+    std::cout<<temp<<std::endl;
     support = new std::vector<support_part_t>[temp];
     support_size = temp;
     char key_symb[37] = {'Z','X','D','C','F','V','B','H','N','J','M','K',',','.',';','/','\'','Q','W','3','E','4','R','5','T','Y','7','U','8','I','O','0','P','-','[','=',']'};
