@@ -538,7 +538,7 @@ void redraw_btn :: react(base_window *window)
 	window->buttons[0]->set_title(L"Игра с подсказками", 20);
 	window->buttons[1]->set_title(L"Произвольная игра", 20);
 	window->buttons[2]->set_title(L"Назад",20);
-    window->status = 0;
+        window->status = 0;
 	window->listener.end_recording();
 	window->listener.save_file("my_record.ogg");
 
@@ -557,7 +557,6 @@ void game_btn :: react(base_window *window)
 	window->listener.start_recording();
 	window->status = 1;
 	window->win_clock.restart();
-    std::cout<<window->win_clock.getElapsedTime().asSeconds()<<std::endl;
 }
 
 void prompts_btn :: react(base_window *window)
@@ -625,7 +624,6 @@ void game_prompt_btn :: react(base_window *window)
 	window->listener.start_recording();
 	window->status = 2;
     window->win_clock.restart();
-    std::cout<<window->win_clock.getElapsedTime().asSeconds()<<std::endl;
 }
 
 void save_btn :: react(base_window *bwindow)
