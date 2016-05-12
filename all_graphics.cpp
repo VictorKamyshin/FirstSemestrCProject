@@ -59,6 +59,7 @@ class writer_t {
         void remember ( sf::Time time, sf::Event event );
         void show ();
         void write();
+        void clean_writer();
 }; //чукча-писатель
 
 
@@ -467,7 +468,7 @@ void base_window :: OnCreate()
 
 	//-------------------------------------------
 	std::vector<std::string> paths;
-	    for( int i = 11; i < 62; ++i ) {
+	    for( int i = 23; i < 62; ++i ) {
         std::string temp_str = "Mics2_Layer7_00";
         temp_str[ temp_str.size() - 2 ] += i / 10;
         temp_str[ temp_str.size() - 1 ] += i % 10;
@@ -539,6 +540,7 @@ void redraw_btn :: react(base_window *window)
 	window->buttons[0]->set_title(L"Игра с подсказками", 20);
 	window->buttons[1]->set_title(L"Произвольная игра", 20);
 	window->buttons[2]->set_title(L"Назад",20);
+	if(window->status==1) { window->writer.write(); window->writer.clean_writer();}
     window->status = 0;
 	window->listener.end_recording();
 	window->listener.save_file("my_record.ogg");
@@ -889,6 +891,12 @@ void writer_t::init_writer (int number_of_keys, std::vector<int> input_map ) { /
 	for ( int i = 0; i < input_map.size(); ++i ) {
         key_map.push_back(input_map[ i ]);
     } //я обращаюсь к 25му индексу (код Z) и вижу 0, потому что к Z привязан нулевой звук
+}
+
+void writer_t::clean_writer ( ) { //массив с кодами кнопок из sfml
+	for ( int i = 0; i < sequence_size; ++i ) {
+        sequence[i].clear();
+    } //я обращаюсь к 25му индексу (код Z) и вижу 0, потому что к Z привязан нулевой звук
 
 }
 void writer_t::remember ( sf::Time time, sf::Event event) {
@@ -985,11 +993,11 @@ int support_part_t::draw (sf::Time time_c,  base_window& window ) {
 }*/
 void support_team_t::init_support_team(int* input_key_map, sf::Font* font) {
     std::ifstream infile;
-    infile.open("writer_test_final.txt");
+    infile.open("March.txt");
     int temp;
     float f_tmp_1, f_tmp_2;
     infile >> temp;
-    std::cout<<temp<<std::endl;
+   // std::cout<<temp<<std::endl;
     support = new std::vector<support_part_t>[temp];
     support_size = temp;
     char key_symb[37] = {'Z','X','D','C','F','V','B','H','N','J','M','K',',','.',';','/','\'','Q','W','3','E','4','R','5','T','Y','7','U','8','I','O','0','P','-','[','=',']'};
