@@ -5,6 +5,7 @@
 #include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 #include <iomanip>
 #include <fstream>
 
@@ -152,7 +153,7 @@ bool mini_play :: is_pushed(sf::RenderWindow *window)
 
 void mini_play :: set_title(const std::wstring &str, int title_size)
 {
-    sf::Vector2f position = btn_circle.getPosition();
+/*    sf::Vector2f position = btn_circle.getPosition();
 	float R = btn_circle.getRadius();
 
 	position.y -= 70;
@@ -166,7 +167,7 @@ void mini_play :: set_title(const std::wstring &str, int title_size)
 	float x = text_rect.width;
 	float y = text_rect.height;
 	btn_title.setOrigin(x/2,y/2);
-	btn_title.setPosition(position);
+	btn_title.setPosition(position);*/
 }
 //-----------------------------------------------
 
@@ -319,11 +320,15 @@ class support_part_t { //кусочек подсказки для одной к�
         int tail_length;
         sf::Font MyFont;
     public:
+        static sf::Texture support_texture;
         support_part_t (char key_symb, int key_number, float time_start, float time_stop, sf::Font* font);
         int draw (sf::Time time_c,  base_window& window ) ;
         ~support_part_t() {
         }
 };
+
+sf::Texture support_part_t :: support_texture;
+
 class support_team_t {
     private:
         std::vector<support_part_t>* support; //массив векторов, не вектор массивов
@@ -540,7 +545,7 @@ void redraw_btn :: react(base_window *window)
 	window->buttons[0]->set_title(L"Игра с подсказками", 20);
 	window->buttons[1]->set_title(L"Произвольная игра", 20);
 	window->buttons[2]->set_title(L"Назад",20);
-	if(window->status==1) { window->writer.write(); window->writer.clean_writer();}
+    if(window->status==1) {window->writer.clean_writer();}
     window->status = 0;
 	window->listener.end_recording();
 	window->listener.save_file("my_record.ogg");
@@ -560,47 +565,26 @@ void game_btn :: react(base_window *window)
 	window->listener.start_recording();
 	window->status = 1;
 	window->win_clock.restart();
+    std::cout<<window->win_clock.getElapsedTime().asSeconds()<<std::endl;
 }
 
 void prompts_btn :: react(base_window *window)
 {
-/*	window->set_parametrs(1120,700,L"Игра по подсказкам", "basa1.jpg",L"",
+	window->set_parametrs(1120,700,L"Игра по подсказкам", "basa1.jpg",L"",
 						 30,sf::Color::White);
-
 	window->buttons.resize(1);
 	window->buttons[0] = new redraw_btn();
-
 	window->buttons[0]->set_position(1120/2-150,600);
 	window->buttons[0]->set_title(L"Вернуться",25);
 
-	std::vector<std::string> paths;
-	    for( int i = 11; i < 62; ++i ) {
-        std::string temp_str = "Mics2_Layer7_00";
-        temp_str[ temp_str.size() - 2 ] += i / 10;
-        temp_str[ temp_str.size() - 1 ] += i % 10;
-        temp_str+=".wav";
-        paths.push_back(temp_str);
-    }
-	int test_mask[37] = {25, 23, 3, 2, 5, 21, 1, 7, 13, 9, 12, 10, 49,
+    int test_mask[37] = {25, 23, 3, 2, 5, 21, 1, 7, 13, 9, 12, 10, 49,
     50, 48, 52, 51, 16, 22, 29, 4, 30, 17, 31,
     19, 24, 33, 20, 34, 8, 14, 26, 15, 56, 46, 55, 47 } ;
-    int reverse_mask[57];
-    for ( int i = 0; i < 57; ++i ) {
-        reverse_mask[i]=-1;
-    }
-    for(int i = 0; i < 37; ++i ){
-        reverse_mask[test_mask[i]] = i;
-    }
-    std::vector<int> key_map;
-    for( int i = 0; i < 57; ++i ) {
-        key_map.push_back(reverse_mask[i]);
-    }
 	window->support_team.init_support_team(test_mask, &(window->win_font) );
-    window->sound_commander.init_sound_commander(paths.size(), key_map, paths);
-    //window->writer.init_writer(37, key_map);
 	window->listener.start_recording();
 	window->status = 2;
-    window->win_clock.restart();*/
+    window->win_clock.restart();
+    std::cout<<window->win_clock.getElapsedTime().asSeconds()<<std::endl;
 
 }
 
@@ -609,24 +593,15 @@ void game_prompt_btn :: react(base_window *window)
 	window->set_parametrs(1120,700,L"Игра по подсказкам", "fon2.jpg",L"Какую мелодию вы хотите научиться играть?)",
 						 30,sf::Color::White);
 
-	window->buttons.resize(1);
+	window->buttons.resize(2);
 	window->buttons[0] = new redraw_btn();
-//	window->buttons[1] = new prompts_btn();
+	window->buttons[1] = new prompts_btn();
 
 	window->buttons[0]->set_position(1120/2-150,600);
 	window->buttons[0]->set_title(L"Назад",25);
-//	window->buttons[1]->set_position(1120/2 + 160,600);
-//	window->buttons[1]->set_title(L"Начать игру!",25);
+	window->buttons[1]->set_position(1120/2 + 160,600);
+	window->buttons[1]->set_title(L"Начать игру!",25);
 
-
-
-	int test_mask[37] = {25, 23, 3, 2, 5, 21, 1, 7, 13, 9, 12, 10, 49,
-    50, 48, 52, 51, 16, 22, 29, 4, 30, 17, 31,
-    19, 24, 33, 20, 34, 8, 14, 26, 15, 56, 46, 55, 47 } ;
-	window->support_team.init_support_team(test_mask, &(window->win_font) );
-	window->listener.start_recording();
-	window->status = 2;
-    window->win_clock.restart();
 }
 
 void save_btn :: react(base_window *bwindow)
@@ -695,13 +670,13 @@ void settings_btn :: react(base_window * window)
 	for(int i = 2; i < 20; ++i)
 	{
 	  window->buttons[i]->set_position(70 + 55*(i-2), 100);
-	  window->buttons[i]->set_title(L"A ",30);
+	 // window->buttons[i]->set_title(L"A ",30);
 	}
 
 	for(int i = 20; i < 39; ++i)
 	{
 	  window->buttons[i]->set_position(70+ 55*(i-20), 300);
-	  window->buttons[i]->set_title(L"A ",30);
+	 // window->buttons[i]->set_title(L"A ",30);
 	}
 
 }
@@ -733,12 +708,6 @@ int main()
 		}
 			if(base.status)
 			base.play_sound(event);
-
-	  /*  if( event.key.code >= 0 && event.key.code < 57 ) { //
-            if(sound_commander.check(event) != 0 ) {            //
-                writer.remember(clock.getElapsedTime(), key_map[event.key.code]); //
-              }   //
-         }  //*/
 
 
          if (event.type == sf::Event::Closed)
@@ -777,26 +746,7 @@ void my_sound_t::load_buffer(std::string s) {  //подрузить звук и�
 void my_sound_t::set_volume(int vol) {   //установить громкость
     sound.setVolume(vol);
 }
-/*sound_commander_t::sound_commander_t(int number_of_sounds, std::vector<int> input_map, std::vector<std::string> paths) { //конструктор
-    if (number_of_sounds != paths.size()){
-        std::cout<<"Error, wrong number of paths/sounds";
-        return;
-    }
-    num_of_sounds = number_of_sounds;
-    sounds = new my_sound_t[number_of_sounds];
-    for ( int i= 0; i < number_of_sounds; ++i ) {
-        sounds[i].load_buffer(paths[ i ]);
-    }
-    for ( int i = 0; i < input_map.size(); ++i ) {
-        key_map.push_back(input_map[ i ]);
-    } //я обращаюсь к 25му индексу (код Z) и вижу 0, потому что к Z привязан нулевой звук
-    volume_control = new volume_control_t[number_of_sounds];
-    for ( int i = 0; i < number_of_sounds; ++i ) {
-        volume_control[i].status = 1; // -1 - кнопка зажата и звук проигрывается, 0 - кнопка отпущена и звук гаснет, 1 - кнопка отпущена и звук не проигрывается
-        volume_control[i].volume = 100; // полная громкость
-        volume_control[i].time_depend_vol = 1000;
-    }
-} //объект создан и готов работать*/
+
 void sound_commander_t::init_sound_commander(int number_of_sounds, std::vector<int> input_map, std::vector<std::string> paths) { //конструктор
     if (number_of_sounds != paths.size()){
         std::cout<<"Error, wrong number of paths/sounds";
@@ -891,12 +841,6 @@ void writer_t::init_writer (int number_of_keys, std::vector<int> input_map ) { /
 	for ( int i = 0; i < input_map.size(); ++i ) {
         key_map.push_back(input_map[ i ]);
     } //я обращаюсь к 25му индексу (код Z) и вижу 0, потому что к Z привязан нулевой звук
-}
-
-void writer_t::clean_writer ( ) { //массив с кодами кнопок из sfml
-	for ( int i = 0; i < sequence_size; ++i ) {
-        sequence[i].clear();
-    } //я обращаюсь к 25му индексу (код Z) и вижу 0, потому что к Z привязан нулевой звук
 
 }
 void writer_t::remember ( sf::Time time, sf::Event event) {
@@ -911,6 +855,12 @@ void writer_t::show () {
         }
         std::cout << std::endl;
     }
+}
+void writer_t::clean_writer ( ) { //массив с кодами кнопок из sfml
+	for ( int i = 0; i < sequence_size; ++i ) {
+        sequence[i].clear();
+    } //я обращаюсь к 25му индексу (код Z) и вижу 0, потому что к Z привязан нулевой звук
+
 }
 void writer_t::write() {
     std::ofstream outfile;
@@ -927,23 +877,56 @@ void writer_t::write() {
     outfile.close();
 }
 support_part_t::support_part_t (char key_symb, int key_number, float time_start, float time_stop, sf::Font* font) {
+    int R = 30;
+    srand(time(NULL));
+    int k = rand() % 4 +1;
+   // sf::String path = "support";
+
     y = 20;
     x = 30 * (key_number ) + 20;
     time_pressed = time_start; //время, когда кнопка должна будет быть нажата
     time_elapsed = time_stop;
-    body.setRadius(20);
-    body.setFillColor(sf::Color(100, 250, 50));
+
+    //добавка ------------------------------------
+    if(k==1)
+       support_texture.loadFromFile("support1.png"); //текстура
+    if(k==2)
+       support_texture.loadFromFile("support2.png"); //текстура
+    if(k==3)
+       support_texture.loadFromFile("support3.png"); //текстура
+    if(k==4)
+       support_texture.loadFromFile("support4.png"); //текстура
+
+    body.setRadius(R);
+    body.setOrigin(R/2,R/2);
+    body.setTexture(&support_texture);
+    //--------------------------------------------------
+
+    //body.setFillColor(sf::Color(100, 250, 50));
     MyFont.loadFromFile("arial.ttf");
     letter.setString(key_symb);
     letter.setFont(*font);
-    letter.setCharacterSize(24);
-    letter.setColor(sf::Color::Red);
+    letter.setCharacterSize(25);
+    letter.setColor(sf::Color::Black);
+
+    //------------------------------------моя добавка ------------------------------------
+
+	sf::Rect<float> text_rect;
+	text_rect = letter.getLocalBounds();
+	float w = text_rect.width;
+	float h = text_rect.height;
+	letter.setOrigin(w/2,h/2);
+
+    //-------------------------------------------------------------------------------------
+
     tail_length = (int ) 200 * (time_elapsed - time_pressed) ;
     tail.setSize(sf::Vector2f( tail_length , 4));
     tail.rotate(90);
     tail.setFillColor(sf::Color(100, 250, 50)); //это все движение вокруг подсказок
 }
 int support_part_t::draw (sf::Time time_c,  base_window& window ) {
+    int r = body.getRadius();
+
     if ( (time_pressed >= time_c.asSeconds() + 3.175 ) || (time_elapsed < time_c.asSeconds()  ) ) { //еще слишком рано что-то рисовать
         return 0; //или уже слишком поздно
     }
@@ -951,15 +934,19 @@ int support_part_t::draw (sf::Time time_c,  base_window& window ) {
     if ( time_pressed < time_c.asSeconds() + 3.175 && time_pressed >= time_c.asSeconds() ) {//самое время
         y = 15 + (int)(200 * (time_c.asSeconds() + 3.175 - time_pressed ));
         body.setPosition(x, y);
-        letter.setPosition( x + 10, y + 5 );
+
+        letter.setPosition( x + r/2, y + 5 );
         tail.setPosition(x+22, y-tail_length);
         status = 0;
     }
+
+    int thick = 3;
     if (time_pressed < time_c.asSeconds() && time_elapsed > time_c.asSeconds() ) { //самое время
-        body.setOutlineThickness(3);
+        body.setOutlineThickness(thick);
         body.setOutlineColor(sf::Color(250, 150, 100));
         body.setPosition( x, 650 );
-        letter.setPosition( x + 10, 655 );
+
+        letter.setPosition( x + r/2, 655 );
         tail.setPosition(x+22, y - (int) (tail_length * (time_elapsed - time_c.asSeconds() ) / (time_elapsed - time_pressed) ) );
         tail.setSize(sf::Vector2f(  (int) (tail_length * (time_elapsed - time_c.asSeconds() ) / (time_elapsed - time_pressed) ), 4));
         status = 1;
@@ -969,35 +956,14 @@ int support_part_t::draw (sf::Time time_c,  base_window& window ) {
     window.draw(letter);
     return status;
 }
-/*support_team_t::support_team_t(int* input_key_map, sf::Font* font) {
-    std::ifstream infile;
-    infile.open("writer_test_final.txt");
-    int temp;
-    float f_tmp_1, f_tmp_2;
-    infile >> temp;
-    std::cout<<temp<<std::endl;
-    support = new std::vector<support_part_t>[temp];
-    support_size = temp;
-    for ( int i = 0; i < support_size; ++i ) {
-        infile >> temp;
-        for ( int j = 0; j < temp/2; ++j ) {
-            infile >> f_tmp_1;
-            infile >> f_tmp_2;
-            support_part_t temp_sup(input_key_map[i],i,f_tmp_1, f_tmp_2, font);
-            support[ i ].push_back(temp_sup);
-        }
-    }
-    infile.close();
-    score = 0;
-    key_map = input_key_map;
-}*/
+
 void support_team_t::init_support_team(int* input_key_map, sf::Font* font) {
     std::ifstream infile;
     infile.open("March.txt");
     int temp;
     float f_tmp_1, f_tmp_2;
     infile >> temp;
-   // std::cout<<temp<<std::endl;
+    std::cout<<temp<<std::endl;
     support = new std::vector<support_part_t>[temp];
     support_size = temp;
     char key_symb[37] = {'Z','X','D','C','F','V','B','H','N','J','M','K',',','.',';','/','\'','Q','W','3','E','4','R','5','T','Y','7','U','8','I','O','0','P','-','[','=',']'};
@@ -1026,4 +992,3 @@ void support_team_t::draw ( sf::Time time_c, sf::Event event, base_window& windo
         }
     }
 }//складывается абсурдная ситуация, когда подсчетом очков должен заниматься графический класс
-
